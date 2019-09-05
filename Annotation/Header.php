@@ -36,4 +36,14 @@ class Header
     {
         return $this->title;
     }
+
+    /**
+     * @return int|null
+     */
+    public function getOrder(): ?int
+    {
+        return $this->order;
+    }
+
+
 }
