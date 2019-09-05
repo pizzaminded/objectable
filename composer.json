@@ -1,0 +1,14 @@
+{
+  "name": "pizzaminded/objectable",
+  "type": "library",
+  "description": "Convert your php objects into html table",
+  "license": "MIT",
+  "require": {
+    "php": "^7.3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Pizzaminded\\Objectable\\": ""
+    }
+  }
+}
