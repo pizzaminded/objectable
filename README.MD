@@ -1,8 +1,6 @@
 # pizzaminded/objectable
 
-Turn your array of objects into html table or whatever you want to by using ``doctrine/annotations``.
-
-Inspired by [My Old Bundle](https://github.com/pizzaminded/EntableBundle). 
+Turn your array of objects into html table or whatever you want to by using ``doctrine/annotations``. Twig Extension included. Inspired by [My Old Bundle](https://github.com/pizzaminded/EntableBundle). 
 
 PHP 7.3 required.
 
@@ -61,12 +59,22 @@ Allows to modify rendered content.
 <?php
 
 class UpperCaseTransformer implements \Pizzaminded\Objectable\Transformer\HeaderTransformerInterface {
-    pubf
+    
+    /**
+     * @param string $title
+     * @param string $className
+     * @param string $propertyName
+     * @return string
+     */
+    public function transform(string $title, string $className, string $propertyName): string
+    {
+        return \strtoupper($title);
+    }
 }
 
 
 /** @var \Pizzaminded\Objectable\Objectable $objectable */
-$objectable->
+$objectable->setHeaderTransformer(new UpperCaseTransformer());
 
 ````
 
