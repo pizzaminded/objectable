@@ -1,22 +1,24 @@
-<table>
-    <thead>
-    <tr>
-        <?php foreach ($headers as $header) { ?>
-            <td>
-                <?php dump($header); ?>
-            </td>
-        <?php } ?>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($rows as $row) { ?>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
         <tr>
-            <?php foreach ($row as $cell) { ?>
+            <?php foreach ($headers as $header) { ?>
                 <td>
-                    <?= $cell; ?>
+                    <?= $header ?>
                 </td>
             <?php } ?>
         </tr>
-    <?php } ?>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        <?php foreach ($rows as $row) { ?>
+            <tr>
+                <?php foreach ($row as $cell) { ?>
+                    <td>
+                        <?= $cell ?>
+                    </td>
+                <?php } ?>
+            </tr>
+        <?php } ?>
+        </tbody>
+    </table>
+</div>
