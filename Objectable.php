@@ -53,6 +53,12 @@ class Objectable
 
     }
 
+    /**
+     * @param array|\Countable $data
+     * @return string
+     * @throws ObjectableException
+     * @throws \ReflectionException
+     */
     public function renderTable($data): string
     {
         if (!is_iterable($data)) {
@@ -92,7 +98,6 @@ class Objectable
                 $headers = $this->fetchHeadersFromObjectReflection($reflectionClass);
             }
 
-
             $propertiesToExtract = \array_keys($headers);
 
             //extract all things in object
@@ -107,17 +112,20 @@ class Objectable
                 unset($value);
             }
 
-            //create action fields for each row
-
+            //create action fields for each row @TODO
             $rows[$index] = $row;
             $index++;
-
         }
 
-        //transform headers
-        //render $row table
+        $headerTitles = [];
 
-        return var_export($data, true);
+        foreach ($headers as $propertyName => $headerAnnotation) {
+            $headerTitles[$propertyName] = $headerAnnotation->getTitle();
+        }
+        //transform headers @TODO
+
+        //render $row table
+        return $this->renderer->renderTable($rows, $headerTitles);
 
     }
 
@@ -139,15 +147,19 @@ class Objectable
         return $this;
     }
 
-
+    /**
+     * @param \ReflectionClass $reflection
+     * @return Header[]
+     */
     protected function fetchHeadersFromObjectReflection(\ReflectionClass $reflection): array
     {
         $output = [];
         $properties = $reflection->getProperties();
 
         foreach ($properties as $property) {
+            /** @var Header $annotation */
             $annotation = $this->annotationReader->getPropertyAnnotation($property, Header::class);
-            
+
             if ($annotation !== null) {
                 $output[$property->name] = $annotation;
             }

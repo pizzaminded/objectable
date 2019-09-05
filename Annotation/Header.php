@@ -29,4 +29,11 @@ class Header
         $this->order = $values['order'] ?? null;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
 }
