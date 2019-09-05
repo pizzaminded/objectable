@@ -165,6 +165,18 @@ class Objectable
             }
         }
 
+        uasort($output, static function ($a, $b) {
+            if ($a === null) {
+                return 1;
+            }
+
+            if ($a > $b) {
+                return -1;
+            }
+
+            return 1;
+        });
+
         return $output;
     }
 
