@@ -147,7 +147,10 @@ class Objectable
 
         foreach ($properties as $property) {
             $annotation = $this->annotationReader->getPropertyAnnotation($property, Header::class);
-            $output[$property->name] = $annotation;
+            
+            if ($annotation !== null) {
+                $output[$property->name] = $annotation;
+            }
         }
 
         return $output;
@@ -166,12 +169,12 @@ class Objectable
             throw new ObjectableException('Could not transform array value as there are no transformers defined.');
         }
 
-        if(\count($this->valueTransformers) === 0 && $value === null) {
+        if (\count($this->valueTransformers) === 0 && $value === null) {
             return '(null)';
         }
 
         //if there is no value transformers, just return the value
-        if(\count($this->valueTransformers) === 0) {
+        if (\count($this->valueTransformers) === 0) {
             return $value;
         }
 
@@ -185,6 +188,5 @@ class Objectable
         }
 
         return $value;
-
     }
 }
