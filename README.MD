@@ -80,13 +80,18 @@ $objectable->setHeaderTransformer(new UpperCaseTransformer());
 
 ### Custom Action Field Transformer
 
+@TODO
 
+### Things that need to be done before ``1.0.0`` release:
+
+-[ ] Odd\Even Rows
+-[ ] Action Fields
+-[ ] Tests
+-[ ] Custom Template Renderers
 
 ## Tests
 
-``
-vendor/bin/phpunit
-``
+@TODO
 
 ## License
 
