@@ -84,10 +84,10 @@ $objectable->setHeaderTransformer(new UpperCaseTransformer());
 
 ### Things that need to be done before ``1.0.0`` release:
 
--[ ] Odd\Even Rows
--[ ] Action Fields
--[ ] Tests
--[ ] Custom Template Renderers
+- [ ] Odd\Even Rows
+- [ ] Action Fields
+- [ ] Tests
+- [ ] Custom Template Renderers
 
 ## Tests
 
