@@ -20,4 +20,12 @@ class PhpTemplateRenderer
         include __DIR__ . '/../resources/templates/php_default/table.php';
         return ob_get_clean();
     }
+
+    public function renderActionField(string $fieldLabel, string $fieldName, string $actionUrl): string
+    {
+        ob_start();
+        include __DIR__ . '/../resources/templates/php_default/action_field.php';
+        return ob_get_clean();
+
+    }
 }

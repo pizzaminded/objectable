@@ -1,0 +1,1 @@
+<a href="<?= $actionUrl ?>" class="objectable-action-field objectable-action-<?= $fieldName ?>"><?= $fieldLabel ?></a>
