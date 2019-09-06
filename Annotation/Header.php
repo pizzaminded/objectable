@@ -4,6 +4,8 @@ namespace Pizzaminded\Objectable\Annotation;
 
 /**
  * @Annotation
+ * @Target({"PROPERTY"})
+ *
  * @author pizzaminded <miki@appvende.net>
  * @license MIT
  */
