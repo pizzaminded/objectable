@@ -91,6 +91,7 @@ class Objectable
         $index = 0;
         $rows = [];
         $headers = [];
+        $propertiesToExtract = [];
         $actionFields = [];
 
         foreach ($data as $element) {
