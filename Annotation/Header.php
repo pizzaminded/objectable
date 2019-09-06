@@ -12,24 +12,16 @@ namespace Pizzaminded\Objectable\Annotation;
 class Header
 {
     /**
-     * @var string|null
+     * @Required
+     * @var string
      */
-    protected $title;
+    public $title;
 
     /**
-     * @var int|null
+     * @Required
+     * @var int
      */
-    protected $order;
-
-    /**
-     * Header constructor.
-     * @param array $values
-     */
-    public function __construct(array $values)
-    {
-        $this->title = $values['title'] ?? null;
-        $this->order = $values['order'] ?? null;
-    }
+    public $order;
 
     /**
      * @return string|null
