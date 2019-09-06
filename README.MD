@@ -6,16 +6,54 @@ PHP 7.3 required.
 
 ## Annotations Reference
 
+### One important thing before we get started
+
+Properties in examples are ``public`` only for example. Objectable uses ``symfony/property-access`` to 
+access values.
+
 ### Objectable\ActionField
 
-Adds action field 
+Adds action field to each row.
+
+Properties:
+- ``name`` - action name. should be unique for each action defined for object. (required)
+- ``path`` - URL (or route identifier) that user will be redirected for. (required)
+- ``label``- URL (or route identifier) that user will be redirected for. (required)
+- ``property`` - property that will be passed to ActionFieldTransformer to generate an redirect URL. If null,
+the whole object will be passed.
+
+
+#### Example:
+
+````php
+<?php 
+
+use Pizzaminded\Objectable\Annotation as Objectable;
+
+/**
+ * @Objectable\Row()
+ * @Objectable\ActionField(name="edit", label="Edit User", path="/user/edit", property="id")
+ * @Objectable\ActionField(name="remove", label="Remove User", path="/user/remove", property="id")
+ */
+ class User {/* ... */}
+````
+
+For User object with ID = 1, default ActionFieldTransformer will create two buttons with URLs:
+- ``/user/edit?id=1`` 
+- ``/user/remove?id=1``
+
 
 ### Objectable\Header
 
 Defines a field which will be rendered and sets the column name for them.
 
+Objectable will look only for ``order`` value passed in annotation. The order of properties written in object
+does not matter.
 
 
+Properties:
+- ``title`` - Column name for current property. (required)
+- ``order`` - Position of current column. (required)
 
 #### Example:
 
@@ -28,32 +66,46 @@ use Pizzaminded\Objectable\Annotation as Objectable;
 class Person {
 
     /**
-     * @Objectable\Header(title="First Name") 
+     * @Objectable\Header(title="ID", order=1) 
+     * @var int
+     */
+    public $id;
+    
+    /**
+     * @Objectable\Header(title="Last Name", order=3) 
      * @var string
      */
+    public $lastName;
+    
+    /**
+      * @Objectable\Header(title="First Name", order=2) 
+      * @var string
+      */
     public $firstName;
 
 }
 
 ````
 
-Will be rendered as:
+These will be rendered like:
 
 
-|First Name|
-|---|
-|Mickey|
-|Mike|
-|Michael|
+|ID|First Name|Last Name
+|---|---|---|
+|2|Mickey|Rourke
+|3|Mike|Tyson
+|4|Michael|Jordan
 
 
+## Transformers Reference
 
-## Value Transformers
-
-Allows to modify rendered content.
+Allows to modify rendered content to fit to your business needs.
 
 ### Custom Header Transformer
 
+Using Custom Header Transformer you can e.g translate headers easily. 
+
+#### Example:
 
 ````php
 <?php
