@@ -137,7 +137,8 @@ class Objectable
                 unset($value);
             }
 
-            $row[$cellIndex] = null;
+            //$row[$cellIndex] = null;
+            $renderedActionFields = '';
 
             //rendering action fields
             foreach ($actionFields as $actionField) {
@@ -161,8 +162,13 @@ class Objectable
                     )
                 );
 
-                $row[$cellIndex] .= $renderedField;
+                $renderedActionFields .= $renderedField;
             }
+
+            if (\count($actionFields) > 0) {
+                $row[$cellIndex] = $renderedActionFields;
+            }
+
 
             $rows[$index] = $row;
             $index++;
