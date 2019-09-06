@@ -221,10 +221,10 @@ class Objectable
             }
 
             if ($a > $b) {
-                return -1;
+                return 1;
             }
 
-            return 1;
+            return -1;
         });
 
         return $output;
