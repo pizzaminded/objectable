@@ -51,7 +51,7 @@ class SymfonyActionFieldTransformer implements ActionFieldTransformerInterface
     /**
      * {@inheritdoc}
      */
-    public function transformActionLabel(string $fieldLabel, string $fieldName, string $fieldPath): string
+    public function transformActionLabel(string $fieldLabel, string $fieldName/**, string $fieldPath **/): string
     {
         return $this->translator->trans($fieldLabel);
     }
