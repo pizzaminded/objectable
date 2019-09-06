@@ -3,9 +3,13 @@
 namespace Pizzaminded\Objectable;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Pizzaminded\Objectable\Annotation\ActionField;
+use Pizzaminded\Objectable\Annotation\ActionFieldHeader;
 use Pizzaminded\Objectable\Annotation\Header;
 use Pizzaminded\Objectable\Annotation\Row;
 use Pizzaminded\Objectable\Renderer\PhpTemplateRenderer;
+use Pizzaminded\Objectable\Transformer\ActionFieldTransformerInterface;
+use Pizzaminded\Objectable\Transformer\DefaultActionFieldTransformer;
 use Pizzaminded\Objectable\Transformer\HeaderTransformerInterface;
 use Pizzaminded\Objectable\Transformer\ValueTransformerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -27,6 +31,11 @@ class Objectable
     protected $annotationReader;
 
     /**
+     * @var DefaultActionFieldTransformer
+     */
+    protected $actionFieldTransformer;
+
+    /**
      * @var PhpTemplateRenderer
      */
     protected $renderer;
@@ -38,14 +47,20 @@ class Objectable
 
     /**
      * Objectable constructor.
+     * @param ActionFieldTransformerInterface|null $actionFieldTransformer
      * @param AnnotationReader|null $annotationReader
      * @throws \Doctrine\Common\Annotations\AnnotationException
      */
     public function __construct(
+        ?ActionFieldTransformerInterface $actionFieldTransformer = null,
         ?AnnotationReader $annotationReader = null
     )
     {
         $this->renderer = new PhpTemplateRenderer();
+
+        if ($actionFieldTransformer === null) {
+            $this->actionFieldTransformer = new DefaultActionFieldTransformer();
+        }
 
         if ($annotationReader === null) {
             $this->annotationReader = new AnnotationReader();
@@ -75,8 +90,10 @@ class Objectable
         $index = 0;
         $rows = [];
         $headers = [];
+        $actionFields = [];
 
         foreach ($data as $element) {
+            $cellIndex = 0;
             $row = [];
 
             if (!$firstElementFetched) {
@@ -96,9 +113,15 @@ class Objectable
                 }
 
                 $headers = $this->fetchHeadersFromObjectReflection($reflectionClass);
-            }
+                $actionFields = $this->fetchActionFieldsFromObjectReflection($reflectionClass);
 
-            $propertiesToExtract = \array_keys($headers);
+                $propertiesToExtract = \array_keys($headers);
+
+                //Add ActionFieldHeader after $propertiesToExtract to prevent weird exceptions appearing
+                if (\count($actionFields) > 0) {
+                    $headers[] = new Header(['title' => 'objectable.actions', 'order' => 100000]);
+                }
+            }
 
             //extract all things in object
             foreach ($propertiesToExtract as $property) {
@@ -108,11 +131,37 @@ class Objectable
                  */
                 $value = $propertyAccessor->getValue($element, $property);
                 //transform value
-                $row[$property] = $this->transformValue($value, $class, $property);
+                $row[$cellIndex++] = $this->transformValue($value, $class, $property);
                 unset($value);
             }
 
-            //create action fields for each row @TODO
+            $row[$cellIndex] = null;
+
+            //rendering action fields
+            foreach ($actionFields as $actionField) {
+                $actionName = $actionField->name;
+                $value = $element;
+                if ($actionField->property !== null) {
+                    $value = $propertyAccessor->getValue($element, $actionField->property);
+                }
+
+                $renderedField = $this->renderer->renderActionField(
+                    $this->actionFieldTransformer->transformActionLabel(
+                        $actionField->label,
+                        $actionName
+                    ),
+                    $actionName,
+                    $this->actionFieldTransformer->transformActionUrl(
+                        $value,
+                        $actionName,
+                        $actionField->path,
+                        $actionField->property
+                    )
+                );
+
+                $row[$cellIndex] .= $renderedField;
+            }
+
             $rows[$index] = $row;
             $index++;
         }
@@ -122,19 +171,12 @@ class Objectable
         foreach ($headers as $propertyName => $headerAnnotation) {
             $headerTitles[$propertyName] = $headerAnnotation->getTitle();
         }
+
         //transform headers @TODO
 
         //render $row table
         return $this->renderer->renderTable($rows, $headerTitles);
 
-    }
-
-    /**
-     * @return HeaderTransformerInterface
-     */
-    public function getHeaderTransformer(): HeaderTransformerInterface
-    {
-        return $this->headerTransformer;
     }
 
     /**
@@ -178,6 +220,25 @@ class Objectable
         });
 
         return $output;
+    }
+
+
+    /**
+     * @param \ReflectionClass $reflection
+     * @return ActionField[]
+     */
+    protected function fetchActionFieldsFromObjectReflection(\ReflectionClass $reflection): array
+    {
+        $actionFieldAnnotations = [];
+        $allAnnotations = $this->annotationReader->getClassAnnotations($reflection);
+
+        foreach ($allAnnotations as $annotation) {
+            if ($annotation instanceof ActionField) {
+                $actionFieldAnnotations[] = $annotation;
+            }
+        }
+
+        return $actionFieldAnnotations;
     }
 
     /**
