@@ -58,6 +58,7 @@ class Objectable
     {
         $this->renderer = new PhpTemplateRenderer();
 
+        $this->actionFieldTransformer = $actionFieldTransformer;
         if ($actionFieldTransformer === null) {
             $this->actionFieldTransformer = new DefaultActionFieldTransformer();
         }
