@@ -13,8 +13,6 @@ class RowMetadata
      */
     protected $headers = [];
 
-    protected $propertiesToExtract = [];
-
     /**
      * @var ActionField[]
      */
@@ -25,7 +23,17 @@ class RowMetadata
      */
     public function getHeaders(): array
     {
-        return $this->headers;
+        $output = $this->headers;
+
+        if (count($this->actionFields) > 0) {
+            $actionFieldHeader = new Header();
+            $actionFieldHeader->order = 100000;
+            $actionFieldHeader->title = 'objectable.headers';
+
+            $output[] = $actionFieldHeader;
+        }
+
+        return $output;
     }
 
     /**
@@ -43,17 +51,7 @@ class RowMetadata
      */
     public function getPropertiesToExtract(): array
     {
-        return $this->propertiesToExtract;
-    }
-
-    /**
-     * @param array $propertiesToExtract
-     * @return RowMetadata
-     */
-    public function setPropertiesToExtract(array $propertiesToExtract): RowMetadata
-    {
-        $this->propertiesToExtract = $propertiesToExtract;
-        return $this;
+        return array_keys($this->headers);
     }
 
     /**

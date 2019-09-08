@@ -110,29 +110,12 @@ class Objectable
 
             if (!$firstElementFetched) {
                 $firstElementFetched = true;
-                $class = \get_class($element); //
-                $reflectionClass = new \ReflectionClass($class);//
+                $class = \get_class($element);
 
-                $rowAnnotation = $this///
-                ->annotationReader//
-                ->getClassAnnotation(//
-                    $reflectionClass,//
-                    Row::class//
-                );//
-
-                if ($rowAnnotation === null) {
-                    throw new ObjectableException('Class ' . $class . ' has no ' . Row::class . ' annotation defined.');
-                }
-
-                $headers = $this->fetchHeadersFromObjectReflection($reflectionClass);
-                $actionFields = $this->fetchActionFieldsFromObjectReflection($reflectionClass);
-
-                $propertiesToExtract = \array_keys($headers);
-
-                //Add ActionFieldHeader after $propertiesToExtract to prevent weird exceptions appearing
-                if (\count($actionFields) > 0) {
-                    $headers[] = new Header(['title' => 'objectable.actions', 'order' => 100000]);
-                }
+                $rowMetadata = $this->extractRowMetadata($element);
+                $headers = $rowMetadata->getHeaders();
+                $actionFields = $rowMetadata->getActionFields();
+                $propertiesToExtract = $rowMetadata->getPropertiesToExtract();
             }
 
             //extract all things in object
@@ -318,9 +301,13 @@ class Objectable
             );
 
         if ($rowAnnotation === null) {
-            throw new ObjectableException('Class ' . $class . ' has no ' . Row::class . ' annotation defined.');
+            throw new ObjectableException('Class "' . $class . '" has no ' . Row::class . ' annotation defined.');
         }
 
+        $rowMetadata = new RowMetadata();
+        $rowMetadata->setHeaders($this->fetchHeadersFromObjectReflection($reflectionClass));
+        $rowMetadata->setActionFields($this->fetchActionFieldsFromObjectReflection($reflectionClass));
 
+        return $rowMetadata;
     }
 }
