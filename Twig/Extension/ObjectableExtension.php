@@ -33,20 +33,28 @@ class ObjectableExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction(
-                'objectable',
-                [$this, 'renderTable'],
-                ['is_safe' => ['html']]
-            )
+            new TwigFunction('objectable', [$this, 'renderTable'], ['is_safe' => ['html']]),
+            new TwigFunction('objectable_single', [$this, 'renderSingle'], ['is_safe' => ['html']])
         ];
     }
 
     /**
      * @param array $data
      * @return string
+     * @throws \Pizzaminded\Objectable\ObjectableException
+     * @throws \ReflectionException
      */
     public function renderTable($data): string
     {
         return $this->objectable->renderTable($data);
+    }
+
+    /**
+     * @param object $data
+     * @return string
+     */
+    public function renderSingle($data): string
+    {
+        return $this->objectable->renderSingleObject($data);
     }
 }

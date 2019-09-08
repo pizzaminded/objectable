@@ -90,8 +90,18 @@ class Objectable
         $class = null;
         $index = 0;
         $rows = [];
+
+        /**
+         * @deprecated
+         */
         $headers = [];
+        /**
+         * @deprecated
+         */
         $propertiesToExtract = [];
+        /**
+         * @deprecated
+         */
         $actionFields = [];
 
         foreach ($data as $element) {
@@ -100,15 +110,15 @@ class Objectable
 
             if (!$firstElementFetched) {
                 $firstElementFetched = true;
-                $class = \get_class($element);
-                $reflectionClass = new \ReflectionClass($class);
+                $class = \get_class($element); //
+                $reflectionClass = new \ReflectionClass($class);//
 
-                $rowAnnotation = $this
-                    ->annotationReader
-                    ->getClassAnnotation(
-                        $reflectionClass,
-                        Row::class
-                    );
+                $rowAnnotation = $this///
+                ->annotationReader//
+                ->getClassAnnotation(//
+                    $reflectionClass,//
+                    Row::class//
+                );//
 
                 if ($rowAnnotation === null) {
                     throw new ObjectableException('Class ' . $class . ' has no ' . Row::class . ' annotation defined.');
@@ -266,6 +276,10 @@ class Objectable
             return '(null)';
         }
 
+        if (\count($this->valueTransformers) === 0 && $value instanceof \DateTime) {
+            return $value->format('Y-m-d H:i:s');
+        }
+
         //if there is no value transformers, just return the value
         if (\count($this->valueTransformers) === 0) {
             return $value;
@@ -281,5 +295,32 @@ class Objectable
         }
 
         return $value;
+    }
+
+
+    public function renderSingleObject(object $object): string
+    {
+
+
+        return '';
+    }
+
+    protected function extractRowMetadata($object): RowMetadata
+    {
+        $class = \get_class($object);
+        $reflectionClass = new \ReflectionClass($class);
+
+        $rowAnnotation = $this
+            ->annotationReader
+            ->getClassAnnotation(
+                $reflectionClass,
+                Row::class
+            );
+
+        if ($rowAnnotation === null) {
+            throw new ObjectableException('Class ' . $class . ' has no ' . Row::class . ' annotation defined.');
+        }
+
+
     }
 }

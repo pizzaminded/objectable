@@ -28,4 +28,11 @@ class PhpTemplateRenderer
         return ob_get_clean();
 
     }
+
+    public function renderSingleObject(array $row, array $headers): string
+    {
+        ob_start();
+        include __DIR__ . '/../resources/templates/php_default/single.php';
+        return ob_get_clean();
+    }
 }
