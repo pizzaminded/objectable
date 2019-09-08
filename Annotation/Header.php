@@ -6,6 +6,7 @@ namespace Pizzaminded\Objectable\Annotation;
  * @Annotation
  * @Target({"PROPERTY"})
  *
+ * @TODO: add some constructor
  * @author pizzaminded <miki@appvende.net>
  * @license MIT
  */
