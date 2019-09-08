@@ -1,22 +1,13 @@
 <div class="table-responsive">
     <table class="table table-sm table-striped table-bordered table-hover">
-        <thead>
-        <tr>
-            <?php foreach ($headers as $header) { ?>
-                <td>
-                    <?= $header ?>
-                </td>
-            <?php } ?>
-        </tr>
-        </thead>
+
         <tbody>
-        <?php foreach ($rows as $row) { ?>
+        <?php foreach ($row as $fieldLabel => $fieldValue) { ?>
             <tr>
-                <?php foreach ($row as $cell) { ?>
-                    <td>
-                        <?= $cell ?>
-                    </td>
-                <?php } ?>
+
+                <td><?= $fieldLabel ?></td>
+                <td><?= $fieldValue ?></td>
+
             </tr>
         <?php } ?>
         </tbody>

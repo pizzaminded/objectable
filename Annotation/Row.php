@@ -6,7 +6,7 @@ namespace Pizzaminded\Objectable\Annotation;
  * @Annotation
  * @Target({"CLASS"})
  *
- * @TODO: add some constructor or throw this away
+ * @deprecated
  * @author pizzaminded <miki@appvende.net>
  * @license MIT
  */

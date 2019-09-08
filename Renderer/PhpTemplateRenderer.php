@@ -3,6 +3,7 @@
 namespace Pizzaminded\Objectable\Renderer;
 
 /**
+ * @internal
  * @author pizzaminded <miki@appvende.net>
  * @license MIT
  */

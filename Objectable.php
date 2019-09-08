@@ -4,7 +4,6 @@ namespace Pizzaminded\Objectable;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Pizzaminded\Objectable\Annotation\ActionField;
-use Pizzaminded\Objectable\Annotation\ActionFieldHeader;
 use Pizzaminded\Objectable\Annotation\Header;
 use Pizzaminded\Objectable\Annotation\Row;
 use Pizzaminded\Objectable\Renderer\PhpTemplateRenderer;
@@ -283,9 +282,63 @@ class Objectable
 
     public function renderSingleObject(object $object): string
     {
+        $rowMetadata = $this->extractRowMetadata($object);
+        $class = \get_class($object);
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $cellIndex = 0;
+
+        //extract all things in object
+        foreach ($rowMetadata->getPropertiesToExtract() as $property) {
+            /**
+             * TODO:
+             * - if there is "getter" property in header, use them
+             */
+            $value = $propertyAccessor->getValue($object, $property);
+            //transform value
+            $row[$property] = $this->transformValue($value, $class, $property);
+            unset($value);
+        }
+
+        //$row[$cellIndex] = null;
+        $renderedActionFields = '';
+
+        //rendering action fields
+        foreach ($rowMetadata->getActionFields() as $actionField) {
+            $actionName = $actionField->name;
+            $value = $object;
+            if ($actionField->property !== null) {
+                $value = $propertyAccessor->getValue($object, $actionField->property);
+            }
+
+            $renderedField = $this->renderer->renderActionField(
+                $this->actionFieldTransformer->transformActionLabel(
+                    $actionField->label,
+                    $actionName
+                ),
+                $actionName,
+                $this->actionFieldTransformer->transformActionUrl(
+                    $value,
+                    $actionName,
+                    $actionField->path,
+                    $actionField->property
+                )
+            );
+
+            $renderedActionFields .= $renderedField;
+        }
+
+        if (\count($rowMetadata->getActionFields()) > 0) {
+            $row['objectable.actions'] = $renderedActionFields;
+        }
 
 
-        return '';
+        $headerTitles = [];
+
+        foreach ($rowMetadata->getHeaders() as $propertyName => $headerAnnotation) {
+            $headerTitles[$propertyName] = $headerAnnotation->getTitle();
+        }
+
+        return $this->renderer->renderSingleObject($row, $headerTitles);
     }
 
     protected function extractRowMetadata($object): RowMetadata
@@ -293,6 +346,7 @@ class Objectable
         $class = \get_class($object);
         $reflectionClass = new \ReflectionClass($class);
 
+        //@TODO remove this
         $rowAnnotation = $this
             ->annotationReader
             ->getClassAnnotation(
@@ -300,6 +354,7 @@ class Objectable
                 Row::class
             );
 
+        //and this
         if ($rowAnnotation === null) {
             throw new ObjectableException('Class "' . $class . '" has no ' . Row::class . ' annotation defined.');
         }

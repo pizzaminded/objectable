@@ -5,9 +5,13 @@ namespace Pizzaminded\Objectable;
 use Pizzaminded\Objectable\Annotation\ActionField;
 use Pizzaminded\Objectable\Annotation\Header;
 
-class RowMetadata
+/**
+ * @internal This class should not be used outside of Pizzaminded\Objectable package.
+ * @author pizzaminded <miki@appvende.net>
+ * @license MIT
+ */
+final class RowMetadata
 {
-
     /**
      * @var Header[]
      */
@@ -19,7 +23,7 @@ class RowMetadata
     protected $actionFields = [];
 
     /**
-     * @return array
+     * @return Header[]
      */
     public function getHeaders(): array
     {
@@ -37,7 +41,7 @@ class RowMetadata
     }
 
     /**
-     * @param array $headers
+     * @param Header[] $headers
      * @return RowMetadata
      */
     public function setHeaders(array $headers): RowMetadata
@@ -47,7 +51,7 @@ class RowMetadata
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getPropertiesToExtract(): array
     {
@@ -55,7 +59,7 @@ class RowMetadata
     }
 
     /**
-     * @return array
+     * @return ActionField[]
      */
     public function getActionFields(): array
     {
@@ -63,7 +67,7 @@ class RowMetadata
     }
 
     /**
-     * @param array $actionFields
+     * @param ActionField[] $actionFields
      * @return RowMetadata
      */
     public function setActionFields(array $actionFields): RowMetadata
@@ -71,6 +75,4 @@ class RowMetadata
         $this->actionFields = $actionFields;
         return $this;
     }
-
-
 }
