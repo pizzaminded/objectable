@@ -1,1 +1,4 @@
-<a class="btn btn-outline-primary btn-sm ml-1" href="<?= $actionUrl ?>" class="objectable-action-field objectable-action-<?= $fieldName ?>"><?= $fieldLabel ?></a>
+<a href="<?= $actionUrl ?>"
+   class="mr-1 objectable-action-field objectable-action-<?= $fieldName ?>">
+    <?= $fieldLabel ?>
+</a>
