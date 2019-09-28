@@ -17,7 +17,7 @@ class DefaultActionFieldTransformer implements ActionFieldTransformerInterface
     public function transformActionUrl($value, string $fieldName, string $fieldPath, ?string $propertyName): string
     {
         if($propertyName === null) {
-            throw new ObjectableException('Please provide "name" attribute for "'.$fieldName.'" action field.');
+            throw new ObjectableException('Please provide "property" attribute for "'.$fieldName.'" action field.');
         }
 
         return $fieldPath.'?'.$propertyName.'='.$value;
