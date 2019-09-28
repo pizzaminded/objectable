@@ -4,6 +4,8 @@ Turn your array of objects into html table or whatever you want to by using ``do
 
 PHP 7.3 required.
 
+
+
 ## Annotations Reference
 
 ### One important thing before we get started
@@ -140,6 +142,8 @@ $objectable->setHeaderTransformer(new UpperCaseTransformer());
 - [ ] Action Fields
 - [ ] Tests
 - [ ] Custom Template Renderers
+- [ ] ``translatable`` parameter for header
+- [ ] defining custom getter for properties
 
 ## Tests
 
