@@ -4,6 +4,7 @@ use Pizzaminded\Objectable\Annotation as Objectable;
 
 /**
  * @Objectable\Row()
+ * @Objectable\ActionField(path="/show.php",name="show-cat-button",label="Show", property="id")
  */
 class Cat
 {
