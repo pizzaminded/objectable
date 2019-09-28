@@ -20,6 +20,11 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class Objectable
 {
     /**
+     * @var array
+     */
+    protected $configuration;
+
+    /**
      * @var HeaderTransformerInterface
      */
     protected $headerTransformer;
@@ -55,6 +60,33 @@ class Objectable
         ?AnnotationReader $annotationReader = null
     )
     {
+        $this->configuration = [
+            /**
+             * Enable sorting
+             */
+            'header_sorting' => false,
+            /**
+             * Values that would be passed to GET parameters
+             */
+            'sorting_asc_phrase' => 'asc',
+            'sorting_desc_phrase' => 'desc',
+            /**
+             * Experimental.
+             *
+             * Allows to sort by one than more column at a time.
+             * Parameters will be passed as an array in GET:
+             * &sort[name]=desc&sort[id]=asc
+             *
+             * If false, current sorting result will be reset for each request.
+             */
+            'chained_sorting' => false,
+            /**
+             * These things are used only by default value transformer. It wont apply if there are at least one transformer passed
+             */
+            'datetime_format' => 'Y-m-d H:i:s', //default datetime format
+            'null_format' => '(null)' //default value which will be shown if property === null
+        ];
+
         $this->renderer = new PhpTemplateRenderer();
 
         $this->actionFieldTransformer = $actionFieldTransformer;
@@ -257,11 +289,11 @@ class Objectable
         }
 
         if (\count($this->valueTransformers) === 0 && $value === null) {
-            return '(null)';
+            return $this->configuration['null_format'];
         }
 
         if (\count($this->valueTransformers) === 0 && $value instanceof \DateTime) {
-            return $value->format('Y-m-d H:i:s');
+            return $value->format($this->configuration['datetime_format']);
         }
 
         //if there is no value transformers, just return the value
@@ -282,6 +314,11 @@ class Objectable
     }
 
 
+    /**
+     * @param object $object
+     * @return string
+     * @throws ObjectableException
+     */
     public function renderSingleObject(object $object): string
     {
         $rowMetadata = $this->extractRowMetadata($object);
