@@ -3,9 +3,7 @@
         <thead>
         <tr>
             <?php foreach ($headers as $header) { ?>
-                <td>
-                    <?= $header ?>
-                </td>
+                <td><?= $header ?></td>
             <?php } ?>
         </tr>
         </thead>
@@ -13,9 +11,7 @@
         <?php foreach ($rows as $row) { ?>
             <tr>
                 <?php foreach ($row as $cell) { ?>
-                    <td>
-                        <?= $cell ?>
-                    </td>
+                    <td><?= $cell ?></td>
                 <?php } ?>
             </tr>
         <?php } ?>

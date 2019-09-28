@@ -1,4 +1,3 @@
 <a href="<?= $actionUrl ?>"
-   class="mr-1 objectable-action-field objectable-action-<?= $fieldName ?>">
-    <?= $fieldLabel ?>
-</a>
+   data-field-name="<?= $fieldName ?>"
+   class="mr-1 objectable-action-field <?= $fieldName ?>"><?= $fieldLabel ?></a>
