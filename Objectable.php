@@ -208,15 +208,17 @@ class Objectable
         }
 
         uasort($output, static function ($a, $b) {
-            if ($a === null) {
-                return 1;
-            }
-
-            if ($a > $b) {
+            /** @var Header $a */
+            /** @var Header $b */
+            if ($a->order === null) {
                 return -1;
             }
 
-            return 1;
+            if ($a->order > $b->order) {
+                return 1;
+            }
+
+            return -1;
         });
 
         return $output;
