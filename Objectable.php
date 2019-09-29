@@ -84,7 +84,10 @@ class Objectable
              * These things are used only by default value transformer. It wont apply if there are at least one transformer passed
              */
             'datetime_format' => 'Y-m-d H:i:s', //default datetime format
-            'null_format' => '(null)' //default value which will be shown if property === null
+            'null_format' => '(null)', //default value which will be shown if property === null,
+            'true_format' => '<span class="badge badge-success">True</span>', //for boolean true
+            'false_format' => '<span class="badge badge-danger">False</span>', //for boolean false
+
         ];
 
         $this->renderer = new PhpTemplateRenderer();
@@ -294,6 +297,14 @@ class Objectable
 
         if (\count($this->valueTransformers) === 0 && $value instanceof \DateTime) {
             return $value->format($this->configuration['datetime_format']);
+        }
+
+        if (\count($this->valueTransformers) === 0 && $value === true) {
+            return $this->configuration['true_format'];
+        }
+
+        if (\count($this->valueTransformers) === 0 && $value === false) {
+            return $this->configuration['false_format'];
         }
 
         //if there is no value transformers, just return the value
