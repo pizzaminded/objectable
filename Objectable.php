@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pizzaminded\Objectable;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Reader;
 use Pizzaminded\Objectable\Annotation\ActionField;
 use Pizzaminded\Objectable\Annotation\Header;
 use Pizzaminded\Objectable\Annotation\Row;
@@ -56,8 +59,8 @@ class Objectable
      * @throws \Doctrine\Common\Annotations\AnnotationException
      */
     public function __construct(
-        ?ActionFieldTransformerInterface $actionFieldTransformer = null,
-        ?AnnotationReader $annotationReader = null
+        Reader $annotationReader,
+        ?ActionFieldTransformerInterface $actionFieldTransformer = null
     )
     {
         $this->configuration = [
@@ -97,6 +100,7 @@ class Objectable
             $this->actionFieldTransformer = new DefaultActionFieldTransformer();
         }
 
+        $this->annotationReader = $annotationReader;
         if ($annotationReader === null) {
             $this->annotationReader = new AnnotationReader();
         }
@@ -309,7 +313,7 @@ class Objectable
 
         //if there is no value transformers, just return the value
         if (\count($this->valueTransformers) === 0) {
-            return $value;
+            return (string)$value;
         }
 
         foreach ($this->valueTransformers as $transformer) {
