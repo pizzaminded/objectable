@@ -1,9 +1,11 @@
 <?php
-
 declare(strict_types=1);
 
 namespace Pizzaminded\Objectable;
 
+use Countable;
+use DateTime;
+use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 use Pizzaminded\Objectable\Annotation\ActionField;
@@ -11,10 +13,15 @@ use Pizzaminded\Objectable\Annotation\Header;
 use Pizzaminded\Objectable\Annotation\Row;
 use Pizzaminded\Objectable\Renderer\PhpTemplateRenderer;
 use Pizzaminded\Objectable\Transformer\ActionFieldTransformerInterface;
-use Pizzaminded\Objectable\Transformer\DefaultActionFieldTransformer;
 use Pizzaminded\Objectable\Transformer\HeaderTransformerInterface;
 use Pizzaminded\Objectable\Transformer\ValueTransformerInterface;
+use ReflectionClass;
+use ReflectionException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use function count;
+use function get_class;
+use function htmlentities;
+use function is_array;
 
 /**
  * @author pizzaminded <miki@appvende.net>
@@ -38,7 +45,7 @@ class Objectable
     protected $annotationReader;
 
     /**
-     * @var DefaultActionFieldTransformer
+     * @var ActionFieldTransformerInterface
      */
     protected $actionFieldTransformer;
 
@@ -54,9 +61,9 @@ class Objectable
 
     /**
      * Objectable constructor.
+     * @param Reader $annotationReader
      * @param ActionFieldTransformerInterface|null $actionFieldTransformer
-     * @param AnnotationReader|null $annotationReader
-     * @throws \Doctrine\Common\Annotations\AnnotationException
+     * @throws AnnotationException
      */
     public function __construct(
         Reader $annotationReader,
@@ -100,9 +107,6 @@ class Objectable
         $this->renderer = new PhpTemplateRenderer();
 
         $this->actionFieldTransformer = $actionFieldTransformer;
-        if ($actionFieldTransformer === null) {
-            $this->actionFieldTransformer = new DefaultActionFieldTransformer();
-        }
 
         $this->annotationReader = $annotationReader;
         if ($annotationReader === null) {
@@ -112,10 +116,10 @@ class Objectable
     }
 
     /**
-     * @param array|\Countable $data
+     * @param array|Countable $data
      * @return string
      * @throws ObjectableException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function renderTable($data): string
     {
@@ -123,7 +127,7 @@ class Objectable
             throw new ObjectableException('Passed $data is not iterable');
         }
 
-        if (\count($data) === 0) {
+        if (count($data) === 0) {
             return $this->renderer->renderNoResultsTemplate();
         }
 
@@ -152,8 +156,7 @@ class Objectable
 
             if (!$firstElementFetched) {
                 $firstElementFetched = true;
-                $class = \get_class($element);
-
+                $class = get_class($element);
                 $rowMetadata = $this->extractRowMetadata($element);
                 $headers = $rowMetadata->getHeaders();
                 $actionFields = $rowMetadata->getActionFields();
@@ -173,6 +176,7 @@ class Objectable
             }
 
             //rendering action fields
+            //TODO: move to separate method
             if (count($actionFields) > 0) {
                 $renderedActionFields = '';
 
@@ -188,7 +192,6 @@ class Objectable
 
                 $row[$cellIndex] = $renderedActionFields;
             }
-
 
             $rows[$index] = $row;
             $index++;
@@ -218,10 +221,10 @@ class Objectable
     }
 
     /**
-     * @param \ReflectionClass $reflection
+     * @param ReflectionClass $reflection
      * @return Header[]
      */
-    protected function fetchHeadersFromObjectReflection(\ReflectionClass $reflection): array
+    protected function fetchHeadersFromObjectReflection(ReflectionClass $reflection): array
     {
         $output = [];
         $properties = $reflection->getProperties();
@@ -258,10 +261,10 @@ class Objectable
 
 
     /**
-     * @param \ReflectionClass $reflection
+     * @param ReflectionClass $reflection
      * @return ActionField[]
      */
-    protected function fetchActionFieldsFromObjectReflection(\ReflectionClass $reflection): array
+    protected function fetchActionFieldsFromObjectReflection(ReflectionClass $reflection): array
     {
         $actionFieldAnnotations = [];
         $allAnnotations = $this->annotationReader->getClassAnnotations($reflection);
@@ -284,29 +287,29 @@ class Objectable
      */
     protected function transformValue($value, string $className, string $propertyName): ?string
     {
-        if (\count($this->valueTransformers) === 0 && \is_array($value)) {
+        if (count($this->valueTransformers) === 0 && is_array($value)) {
             throw new ObjectableException('Could not transform array value as there are no transformers defined.');
         }
 
-        if (\count($this->valueTransformers) === 0 && $value === null) {
+        if (count($this->valueTransformers) === 0 && $value === null) {
             return $this->configuration['null_format'];
         }
 
-        if (\count($this->valueTransformers) === 0 && $value instanceof \DateTime) {
+        if (count($this->valueTransformers) === 0 && $value instanceof DateTime) {
             return $value->format($this->configuration['datetime_format']);
         }
 
-        if (\count($this->valueTransformers) === 0 && $value === true) {
+        if (count($this->valueTransformers) === 0 && $value === true) {
             return $this->configuration['true_format'];
         }
 
-        if (\count($this->valueTransformers) === 0 && $value === false) {
+        if (count($this->valueTransformers) === 0 && $value === false) {
             return $this->configuration['false_format'];
         }
 
         //if there is no value transformers, just return the value
-        if (\count($this->valueTransformers) === 0) {
-            return \htmlentities((string)$value);
+        if (count($this->valueTransformers) === 0) {
+            return htmlentities((string)$value);
         }
 
         foreach ($this->valueTransformers as $transformer) {
@@ -323,8 +326,8 @@ class Objectable
 
     protected function extractRowMetadata($object): RowMetadata
     {
-        $class = \get_class($object);
-        $reflectionClass = new \ReflectionClass($class);
+        $class = get_class($object);
+        $reflectionClass = new ReflectionClass($class);
 
         //@TODO remove this
         $rowAnnotation = $this
