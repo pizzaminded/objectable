@@ -16,8 +16,12 @@ class SymfonyActionFieldTransformer implements ActionFieldTransformerInterface
     /**
      * @var UrlGeneratorInterface
      */
-    protected $urlGenerator;
+    protected UrlGeneratorInterface $urlGenerator;
 
+    /**
+     * @var PropertyAccessor
+     */
+    protected PropertyAccessor $propertyAccessor;
 
     /**
      * SymfonyActionFieldTransformer constructor.
@@ -26,14 +30,25 @@ class SymfonyActionFieldTransformer implements ActionFieldTransformerInterface
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
     /**
      * @param ActionField $actionField Annotation taken from given entity
+     * @param object $entity
      * @return string
      */
-    public function transformActionUrl(ActionField $actionField): string
+    public function transformActionUrl(ActionField $actionField, object $entity): string
     {
-        // TODO: Implement transformActionUrl() method.
+        //Take a value from given property
+        $propertyValue = $this->propertyAccessor->getValue($entity, $actionField->property);
+
+        //Generate url
+        return $this->urlGenerator->generate(
+            $actionField->path,
+            [
+                $actionField->key => $propertyValue
+            ]
+        );
     }
 }
