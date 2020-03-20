@@ -172,23 +172,22 @@ class Objectable
                 unset($value);
             }
 
-            //$row[$cellIndex] = null;
-            $renderedActionFields = '';
-
             //rendering action fields
-            foreach ($actionFields as $actionField) {
-                $actionName = $actionField->name;
+            if (count($actionFields) > 0) {
+                $renderedActionFields = '';
 
-                $renderedField = $this->renderer->renderActionField(
-                    $this->actionFieldTransformer->transformActionLabel($actionField, $element),
-                    $actionName,
-                    $this->actionFieldTransformer->transformActionUrl($actionField, $element)
-                );
+                foreach ($actionFields as $actionField) {
+                    $actionName = $actionField->name;
 
-                $renderedActionFields .= $renderedField;
-            }
+                    $renderedField = $this->renderer->renderActionField(
+                        $this->actionFieldTransformer->transformActionLabel($actionField, $element),
+                        $actionName,
+                        $this->actionFieldTransformer->transformActionUrl($actionField, $element)
+                    );
 
-            if (\count($actionFields) > 0) {
+                    $renderedActionFields .= $renderedField;
+                }
+
                 $row[$cellIndex] = $renderedActionFields;
             }
 
