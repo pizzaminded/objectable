@@ -68,11 +68,13 @@ class Objectable
              * Enable sorting
              */
             'header_sorting' => false,
+
             /**
              * Values that would be passed to GET parameters
              */
             'sorting_asc_phrase' => 'asc',
             'sorting_desc_phrase' => 'desc',
+
             /**
              * Experimental.
              *
@@ -83,6 +85,8 @@ class Objectable
              * If false, current sorting result will be reset for each request.
              */
             'chained_sorting' => false,
+
+
             /**
              * These things are used only by default value transformer. It wont apply if there are at least one transformer passed
              */
@@ -251,6 +255,10 @@ class Objectable
             /** @var Header $b */
             if ($a->order === null) {
                 return -1;
+            }
+
+            if ($a->order === $b->order) {
+                throw ObjectableException::sameHeadersOrder($a, $b);
             }
 
             if ($a->order > $b->order) {
