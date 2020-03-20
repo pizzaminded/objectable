@@ -2,9 +2,8 @@
 
 namespace Pizzaminded\Objectable\Transformer;
 
-use Pizzaminded\Objectable\ObjectableException;
+use Pizzaminded\Objectable\Annotation\ActionField;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Bridges Objectable Action Fields with Symfony Router and Translator.
@@ -19,40 +18,22 @@ class SymfonyActionFieldTransformer implements ActionFieldTransformerInterface
      */
     protected $urlGenerator;
 
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
 
     /**
      * SymfonyActionFieldTransformer constructor.
      * @param UrlGeneratorInterface $urlGenerator
-     * @param TranslatorInterface $translator
      */
-    public function __construct(UrlGeneratorInterface $urlGenerator, TranslatorInterface $translator)
+    public function __construct(UrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
-        $this->translator = $translator;
     }
 
     /**
-     * {@inheritdoc}
-     * @throws ObjectableException
+     * @param ActionField $actionField Annotation taken from given entity
+     * @return string
      */
-    public function transformActionUrl($value, string $fieldName, string $fieldPath, ?string $propertyName): string
+    public function transformActionUrl(ActionField $actionField): string
     {
-        if ($propertyName === null || !is_scalar($value)) {
-            throw new ObjectableException('Please provide a scalar property for "' . $fieldName . '" action');
-        }
-
-        return $this->urlGenerator->generate($fieldPath, [$propertyName => $value]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function transformActionLabel(string $fieldLabel, string $fieldName/**, string $fieldPath **/): string
-    {
-        return $this->translator->trans($fieldLabel);
+        // TODO: Implement transformActionUrl() method.
     }
 }
