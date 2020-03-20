@@ -178,23 +178,11 @@ class Objectable
             //rendering action fields
             foreach ($actionFields as $actionField) {
                 $actionName = $actionField->name;
-                $value = $element;
-                if ($actionField->property !== null) {
-                    $value = $propertyAccessor->getValue($element, $actionField->property);
-                }
 
                 $renderedField = $this->renderer->renderActionField(
-                    $this->actionFieldTransformer->transformActionLabel(
-                        $actionField->label,
-                        $actionName
-                    ),
+                    $this->actionFieldTransformer->transformActionLabel($actionField, $element),
                     $actionName,
-                    $this->actionFieldTransformer->transformActionUrl(
-                        $value,
-                        $actionName,
-                        $actionField->path,
-                        $actionField->property
-                    )
+                    $this->actionFieldTransformer->transformActionUrl($actionField, $element)
                 );
 
                 $renderedActionFields .= $renderedField;
