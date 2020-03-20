@@ -18,11 +18,13 @@ access values.
 Adds action field to each row.
 
 Properties:
-- ``name`` - action name. should be unique for each action defined for object. (required)
+- ``name`` - *Required* action name. Should be unique for each action defined for object. This value will be also 
+passed to action field as a class with ``objectable-action-`` prefix and as a value of ``data-objectable-action`` attribute. 
 - ``path`` - URL (or route identifier) that user will be redirected for. (required)
-- ``label``- URL (or route identifier) that user will be redirected for. (required)
+- ``label``- Value shown as a content of given button. (required)
 - ``property`` - property that will be passed to ActionFieldTransformer to generate an redirect URL. If null,
 the whole object will be passed.
+- ``key`` - Name of param that value from ``property`` field will be passed.
 
 
 #### Example:

@@ -29,6 +29,7 @@ class ActionField
     public $path;
 
     /**
+     * Value shown as a content of given button
      * @Required
      * @var string
      */
@@ -37,7 +38,14 @@ class ActionField
     /**
      * Which value should be passed an value to ActionFieldTransformer?
      * If empty, whole object would be passed
+     * @var string
      */
     public $property;
+
+    /**
+     * Name of param that value from ``property`` field will be passed.
+     * @var string
+     */
+    public $key;
 
 }
