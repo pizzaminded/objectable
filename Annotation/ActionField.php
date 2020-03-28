@@ -40,12 +40,12 @@ class ActionField
      * If empty, whole object would be passed
      * @var string
      */
-    public $property;
+    public $property = 'id';
 
     /**
      * Name of param that value from ``property`` field will be passed.
      * @var string
      */
-    public $key;
+    public $key = 'id';
 
 }
