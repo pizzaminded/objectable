@@ -5,7 +5,6 @@ namespace Pizzaminded\Objectable;
 
 use Countable;
 use DateTime;
-use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\Reader;
 use Pizzaminded\Objectable\Annotation\ActionField;
@@ -60,14 +59,14 @@ class Objectable
     protected $valueTransformers = [];
 
     /**
-     * Objectable constructor.
      * @param Reader $annotationReader
      * @param ActionFieldTransformerInterface|null $actionFieldTransformer
-     * @throws AnnotationException
+     * @param HeaderTransformerInterface|null $headerTransformer
      */
     public function __construct(
         Reader $annotationReader,
-        ?ActionFieldTransformerInterface $actionFieldTransformer = null
+        ?ActionFieldTransformerInterface $actionFieldTransformer = null,
+        ?HeaderTransformerInterface $headerTransformer = null
     )
     {
         $this->configuration = [
@@ -107,6 +106,7 @@ class Objectable
         $this->renderer = new PhpTemplateRenderer();
 
         $this->actionFieldTransformer = $actionFieldTransformer;
+        $this->headerTransformer = $headerTransformer;
 
         $this->annotationReader = $annotationReader;
         if ($annotationReader === null) {
@@ -200,14 +200,15 @@ class Objectable
         $headerTitles = [];
 
         foreach ($headers as $propertyName => $headerAnnotation) {
-            $headerTitles[$propertyName] = $headerAnnotation->getTitle();
+            $title = $headerAnnotation->getTitle();
+            if($this->headerTransformer !== null) {
+                $title = $this->headerTransformer->transform($title, $class, $propertyName);
+            }
+
+            $headerTitles[$propertyName] = $title;
         }
 
-        //transform headers @TODO
-
-        //render $row table
         return $this->renderer->renderTable($rows, $headerTitles);
-
     }
 
     /**
