@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Pizzaminded\Objectable;
 
 use Pizzaminded\Objectable\Annotation\ActionField;
@@ -7,7 +9,7 @@ use Pizzaminded\Objectable\Annotation\Header;
 
 /**
  * @internal This class should not be used outside of Pizzaminded\Objectable package.
- * @author pizzaminded <miki@appvende.net>
+ * @author pizzaminded <mikolajczajkowsky@gmail.com>
  * @license MIT
  */
 final class RowMetadata
@@ -34,7 +36,7 @@ final class RowMetadata
             $actionFieldHeader->order = 100000;
             $actionFieldHeader->title = 'objectable.headers';
 
-            $output[] = $actionFieldHeader;
+            $output['objectable.headers'] = $actionFieldHeader;
         }
 
         return $output;
